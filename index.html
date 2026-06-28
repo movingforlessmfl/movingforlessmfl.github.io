@@ -133,8 +133,9 @@
   form{background:#fff;border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);color:var(--ink)}
   .field{margin-bottom:16px}
   .field label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
-  .field input,.field select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;background:#fff}
-  .field input:focus,.field select:focus{outline:none;border-color:var(--teal)}
+  .field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;background:#fff}
+  .field textarea{resize:vertical;min-height:84px;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   form .btn{width:100%;margin-top:6px}
   .form-msg{display:none;text-align:center;font-weight:700;color:var(--teal-dark);padding:10px;margin-top:8px}
@@ -326,7 +327,14 @@
         <li>Open 7 days a week, 6AM–8PM</li>
       </ul>
     </div>
-    <form id="quoteForm" onsubmit="return submitQuote(event)">
+    <form id="quoteForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="return submitQuote(event)">
+      <!-- Submissions are emailed to movingforlessmfl@gmail.com via Web3Forms.
+           Get the free access key at https://web3forms.com (enter that Gmail address),
+           then replace the value below. -->
+      <input type="hidden" name="access_key" value="REPLACE_WITH_WEB3FORMS_ACCESS_KEY" />
+      <input type="hidden" name="subject" value="New Moving Quote Request — Moving For Less" />
+      <input type="hidden" name="from_name" value="Moving For Less Website" />
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none !important" />
       <div class="field">
         <label for="name">Full Name</label>
         <input type="text" id="name" name="name" required placeholder="Your name" />
@@ -369,6 +377,20 @@
           </select>
         </div>
       </div>
+      <div class="field">
+        <label for="heard_about">Where did you hear about Moving For Less?</label>
+        <select id="heard_about" name="heard_about" required>
+          <option value="">Select…</option>
+          <option>Google</option>
+          <option>Yelp</option>
+          <option>Friend / Referral</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="notes">Anything else you'd like us to know about your move? <span style="font-weight:400;color:var(--muted)">(unique furniture, stairs, etc.)</span></label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Tell us anything that helps us give an accurate quote…"></textarea>
+      </div>
       <button type="submit" class="btn btn-sun">Get My Free Quote →</button>
       <div class="form-msg" id="formMsg">✅ Thanks! We'll reach out shortly. For the fastest response call (760) 218-8548.</div>
     </form>
@@ -404,11 +426,31 @@
 <a href="tel:+17602188548" class="call-bar">📞 Tap to Call — (760) 218-8548</a>
 
 <script>
-  function submitQuote(e){
+  async function submitQuote(e){
     e.preventDefault();
-    // TODO: connect this to your email, CRM, or a form service (Formspree, Google Sheet, etc.)
-    document.getElementById('formMsg').style.display = 'block';
-    document.getElementById('quoteForm').reset();
+    var form = document.getElementById('quoteForm');
+    var msg  = document.getElementById('formMsg');
+    var btn  = form.querySelector('button[type=submit]');
+    var original = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try{
+      var res  = await fetch('https://api.web3forms.com/submit', { method:'POST', body: new FormData(form) });
+      var json = await res.json();
+      if(json.success){
+        msg.style.color = '';
+        msg.textContent = "✅ Thanks! We'll reach out shortly. For the fastest response call (760) 218-8548.";
+        form.reset();
+      } else {
+        msg.style.color = '#b00020';
+        msg.textContent = "Sorry — something went wrong. Please call us at (760) 218-8548.";
+      }
+    }catch(err){
+      msg.style.color = '#b00020';
+      msg.textContent = "Network error. Please call us at (760) 218-8548.";
+    }finally{
+      msg.style.display = 'block';
+      btn.disabled = false; btn.textContent = original;
+    }
     return false;
   }
 </script>
