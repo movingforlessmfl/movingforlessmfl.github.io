@@ -178,7 +178,7 @@
     <h1>Palm Desert's Trusted Local Movers — For Less</h1>
     <p>Fast, friendly, fully insured moving across the Coachella Valley. Honest flat rates, no surprise fees, careful with every box.</p>
     <div class="hero-cta">
-      <a href="#quote" class="btn btn-sun">Get a Free Quote</a>
+      <a href="#quote" class="btn btn-sun">Request Move Now</a>
       <a href="tel:+17602188548" class="btn btn-ghost">📞 Call (760) 218-8548</a>
     </div>
     <div class="badges">
@@ -389,8 +389,8 @@
         <label for="notes">Anything else you'd like us to know about your move? <span style="font-weight:400;color:var(--muted)">(unique furniture, stairs, etc.)</span></label>
         <textarea id="notes" name="notes" rows="3" placeholder="Tell us anything that helps us give an accurate quote…"></textarea>
       </div>
-      <button type="submit" class="btn btn-sun">Get My Free Quote →</button>
-      <div class="form-msg" id="formMsg">✅ Thanks! We'll reach out shortly. For the fastest response call (760) 218-8548.</div>
+      <button type="submit" class="btn btn-sun">Send Move Request to MFL</button>
+      <div class="form-msg" id="formMsg">MFL will call you within 24 hours to discuss details!</div>
     </form>
   </div>
 </section>
@@ -436,7 +436,7 @@
       var json = await res.json();
       if(json.success === true || json.success === 'true'){
         msg.style.color = '';
-        msg.textContent = "✅ Thanks! We'll reach out shortly. For the fastest response call (760) 218-8548.";
+        msg.textContent = "MFL will call you within 24 hours to discuss details!";
         form.reset();
       } else {
         msg.style.color = '#b00020';
